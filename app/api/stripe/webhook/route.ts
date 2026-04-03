@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   switch (event.type) {
 
     case 'checkout.session.completed': {
-      const session = event.data.object as Stripe.CheckoutSession
+      const session = event.data.object as Stripe.Checkout.Session
       const userId = session.metadata?.userId
       const customerId = session.customer as string
       const subscriptionId = session.subscription as string
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
         stripe_price_id: subscription.items.data[0].price.id,
         status: subscription.status,
         current_period_end: new Date(
-          subscription.current_period_end * 1000
+          (subscription as any).current_period_end * 1000
         ).toISOString(),
       }, { onConflict: 'user_id' })
 
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
           status: subscription.status,
           stripe_price_id: subscription.items.data[0].price.id,
           current_period_end: new Date(
-            subscription.current_period_end * 1000
+            (subscription as any).current_period_end * 1000
           ).toISOString(),
         })
         .eq('stripe_subscription_id', subscription.id)

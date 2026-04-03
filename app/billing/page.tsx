@@ -5,8 +5,9 @@ import Link from 'next/link'
 export default async function BillingPage({
   searchParams,
 }: {
-  searchParams: { success?: string }
+  searchParams: Promise<{ success?: string }>
 }) {
+  const { success } = await searchParams
   const supabase = await createSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -22,7 +23,7 @@ export default async function BillingPage({
       <h1 className="text-3xl font-bold mb-8">Billing</h1>
 
       {/* Success banner */}
-      {searchParams.success && (
+      {success && (
         <div className="bg-green-50 border border-green-200 text-green-700 rounded-xl px-5 py-4 mb-6 text-sm">
           🎉 Payment successful! Your subscription is now active.
         </div>
