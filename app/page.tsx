@@ -1,89 +1,127 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Home() {
   return (
-    <main className="flex flex-col items-center justify-center min-h-[calc(100vh-73px)] px-6 py-12 lg:py-24 relative overflow-hidden bg-background text-foreground">
+    <main className="flex flex-col min-h-[calc(100vh-73px)] relative bg-background text-foreground">
       
-      {/* Background decoration */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[10%] right-[-5%] w-[30%] h-[30%] bg-purple-500/10 blur-[100px] rounded-full" />
-      </div>
-
-      <div className="max-w-4xl w-full text-center space-y-12 relative animate-in fade-in duration-700">
+      {/* Hero Section with Image Background */}
+      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
+        <Image
+          src="/images/sherwani_hero.png"
+          alt="Shreeji Ethnic Hero"
+          fill
+          className="object-cover object-top brightness-[0.8]"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
         
-        {/* Hero Section */}
-        <div className="space-y-6">
-          <h1 className="text-6xl lg:text-8xl font-black tracking-tight leading-[1.1] text-slate-900">
-            Welcome to <span className="text-blue-600">My App</span> <span className="inline-block animate-bounce">🚀</span>
+        <div className="relative z-10 text-center space-y-6 px-6 max-w-4xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <span className="text-accent font-bold uppercase tracking-[0.3em] text-sm">Now Exclusively Available</span>
+          <h1 className="text-6xl lg:text-8xl font-black tracking-tighter leading-none text-white drop-shadow-2xl">
+            Shreeji <span className="text-accent">Ethnic</span>
           </h1>
-          <p className="text-xl lg:text-2xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            A high-performance, full-stack web application built with <span className="text-slate-900 font-semibold underline decoration-blue-500/30">Next.js</span>, 
-            <span className="text-slate-900 font-semibold underline decoration-blue-500/30"> Supabase</span>, and <span className="text-slate-900 font-semibold underline decoration-blue-500/30">Stripe</span>. 
+          <p className="text-xl lg:text-2xl text-white/90 max-w-2xl mx-auto font-medium drop-shadow-md">
+            Defining royalty with our exquisite collection of premium Sherwanis and Indo-Western couture.
           </p>
-        </div>
-
-
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-5 justify-center items-center pt-4">
-          <Link
-            href="/dashboard"
-            className="group relative flex h-14 items-center justify-center gap-3 rounded-2xl bg-foreground px-10 text-base font-bold text-background transition-all hover:scale-105 active:scale-95 shadow-lg shadow-foreground/10 sm:w-auto"
-          >
-            Go to Dashboard
-            <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </Link>
-          <div className="flex gap-4 w-full sm:w-auto">
-            <Link
-              href="/login"
-              className="flex-1 sm:flex-none flex h-14 items-center justify-center rounded-2xl border-2 border-muted bg-transparent px-8 text-base font-bold transition-all hover:bg-muted/50 hover:border-foreground/20 active:scale-95"
-            >
-              Sign In
-            </Link>
+          <div className="pt-6 flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/products"
-              className="flex-1 sm:flex-none flex h-14 items-center justify-center rounded-2xl border-2 border-muted bg-transparent px-8 text-base font-bold transition-all hover:bg-muted/50 hover:border-foreground/20 active:scale-95"
+              className="bg-accent text-white px-10 py-4 rounded-full text-lg font-bold hover:bg-accent/90 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-accent/20"
             >
-              View Plans
+              Shop Collection
+            </Link>
+            <Link
+              href="/login"
+              className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-4 rounded-full text-lg font-bold hover:bg-white/20 transition-all active:scale-95"
+            >
+              Custom Fitting
             </Link>
           </div>
         </div>
+      </section>
 
-        {/* Feature Cards */}
-        <div className="mt-32 grid grid-cols-1 sm:grid-cols-3 gap-8 text-left">
+      {/* Featured Categories */}
+      <section className="py-24 px-6 max-w-7xl mx-auto w-full">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+          <div className="space-y-2">
+            <h2 className="text-4xl font-black tracking-tight">Our Signature Collections</h2>
+            <p className="text-muted-foreground text-lg">Hand-crafted elegance for your most special occasions.</p>
+          </div>
+          <Link href="/products" className="text-accent font-bold hover:underline underline-offset-4">View All Designs →</Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[
             { 
-              title: 'Next.js 15', 
-              desc: 'Leveraging the latest App Router patterns for speed and SEO optimization.', 
-              icon: '⚡',
-              borderColor: 'hover:border-blue-500/50'
+              title: 'The Royal Sherwani', 
+              tag: 'Wedding Essence',
+              img: '/images/sherwani_hero.png',
+              price: 'Starts from ₹24,999'
             },
             { 
-              title: 'Supabase Auth', 
-              desc: 'Secure authentication and real-time database integration out of the box.', 
-              icon: '🗄️',
-              borderColor: 'hover:border-emerald-500/50'
+              title: 'Indo-Western Fusion', 
+              tag: 'Modern Royalty',
+              img: '/images/indo_western.png',
+              price: 'Starts from ₹18,999'
             },
             { 
-              title: 'Stripe Billing', 
-              desc: 'Seamless subscription management and payment flows for your users.', 
-              icon: '💳',
-              borderColor: 'hover:border-purple-500/50'
+              title: 'Celebration Kurtas', 
+              tag: 'Elegant Comfort',
+              img: '/images/kurta.png',
+              price: 'Starts from ₹4,999'
             },
-          ].map((card) => (
-            <div
-              key={card.title}
-              className={`group bg-muted/20 backdrop-blur-md border border-muted/30 rounded-3xl p-8 transition-all hover:shadow-2xl hover:-translate-y-1 ${card.borderColor}`}
-            >
-              <div className="text-4xl mb-6">{card.icon}</div>
-              <h2 className="text-xl font-black mb-3 text-foreground">{card.title}</h2>
-              <p className="text-muted-foreground text-base leading-relaxed">{card.desc}</p>
+          ].map((item, i) => (
+            <div key={item.title} className="group cursor-pointer">
+              <div className="relative aspect-[3/4] overflow-hidden rounded-3xl mb-4 bg-muted animate-in fade-in duration-500" style={{ animationDelay: `${i * 100}ms` }}>
+                <Image
+                  src={item.img}
+                  alt={item.title}
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute top-4 left-4">
+                  <span className="bg-white/90 backdrop-blur-md text-slate-900 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
+                    {item.tag}
+                  </span>
+                </div>
+              </div>
+              <h3 className="text-xl font-bold group-hover:text-accent transition-colors">{item.title}</h3>
+              <p className="text-muted-foreground font-medium">{item.price}</p>
             </div>
           ))}
         </div>
-      </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="bg-muted/30 py-24 px-6 border-y border-muted/50">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+          {[
+            { title: 'Custom Fitting', desc: 'Expert tailors ensuring a perfect silhouette for your body type.', icon: '🧵' },
+            { title: 'Premium Fabrics', desc: 'Sourced from the finest silk and velvet mills across India.', icon: '✨' },
+            { title: 'Global Delivery', desc: 'Elegance delivered to your doorstep, anywhere in the world.', icon: '🌍' },
+          ].map((feature) => (
+            <div key={feature.title} className="space-y-4">
+              <div className="text-5xl">{feature.icon}</div>
+              <h3 className="text-xl font-bold">{feature.title}</h3>
+              <p className="text-muted-foreground leading-relaxed">{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer CTA */}
+      <section className="py-24 px-6 text-center">
+        <div className="max-w-3xl mx-auto space-y-8 p-12 rounded-[3rem] bg-slate-900 text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-accent/20 blur-[80px] rounded-full" />
+          <h2 className="text-4xl font-black tracking-tight relative z-10">Make Your Special Day Unforgettable</h2>
+          <p className="text-white/70 text-lg relative z-10">Book a personal styling session or visit our boutique to experience luxury first-hand.</p>
+          <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center relative z-10">
+            <Link href="/login" className="bg-accent text-white px-8 py-3.5 rounded-full font-bold hover:bg-accent/90 transition-all">Book Appointment</Link>
+            <Link href="/products" className="bg-white text-slate-900 px-8 py-3.5 rounded-full font-bold hover:bg-slate-100 transition-all">View All Styles</Link>
+          </div>
+        </div>
+      </section>
     </main>
   )
 }

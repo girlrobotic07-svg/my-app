@@ -42,7 +42,8 @@ export default function Navbar() {
 
   return (
     <nav className="border-b border-gray-200 bg-white px-6 py-4 flex items-center justify-between">
-      <Link href="/" className="font-bold text-lg">MyApp</Link>
+      <Link href="/" className="font-bold text-lg">Shreeji Ethnic</Link>
+
       <div className="flex items-center gap-4 text-sm">
         <Link href="/products" className="text-gray-500 hover:text-black transition">Plans</Link>
         <Link href="/account" className="text-gray-500 hover:text-black transition">Account</Link>
