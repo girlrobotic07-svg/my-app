@@ -14,14 +14,15 @@ export default function Home() {
         
         {/* Hero Section */}
         <div className="space-y-6">
-          <h1 className="text-6xl lg:text-8xl font-black tracking-tight leading-[1.1] text-foreground">
-            Welcome to <span className="text-accent">My App</span> <span className="inline-block animate-bounce">🚀</span>
+          <h1 className="text-6xl lg:text-8xl font-black tracking-tight leading-[1.1] text-slate-900">
+            Welcome to <span className="text-blue-600">My App</span> <span className="inline-block animate-bounce">🚀</span>
           </h1>
-          <p className="text-xl lg:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            A high-performance, full-stack web application built with <span className="text-foreground font-semibold underline decoration-accent/30">Next.js</span>, 
-            <span className="text-foreground font-semibold underline decoration-accent/30"> Supabase</span>, and <span className="text-foreground font-semibold underline decoration-accent/30">Stripe</span>. 
+          <p className="text-xl lg:text-2xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+            A high-performance, full-stack web application built with <span className="text-slate-900 font-semibold underline decoration-blue-500/30">Next.js</span>, 
+            <span className="text-slate-900 font-semibold underline decoration-blue-500/30"> Supabase</span>, and <span className="text-slate-900 font-semibold underline decoration-blue-500/30">Stripe</span>. 
           </p>
         </div>
+
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-5 justify-center items-center pt-4">
