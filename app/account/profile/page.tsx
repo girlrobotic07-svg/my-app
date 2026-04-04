@@ -45,35 +45,43 @@ export default function ProfilePage() {
     const file = e.target.files?.[0]
     if (!file || !userId) return
 
-    setUploading(true)
-    setError(null)
+    try {
+      setUploading(true)
+      setError(null)
+      setMessage(null)
 
-    const fileExt = file.name.split('.').pop()
-    const filePath = `${userId}/avatar.${fileExt}`
+      const fileExt = file.name.split('.').pop()
+      const filePath = `${userId}/avatar.${fileExt}`
 
-    const { error: uploadError } = await supabase.storage
-      .from('avatars')
-      .upload(filePath, file, { upsert: true })
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true })
 
-    if (uploadError) {
-      setError(uploadError.message)
+      if (uploadError) throw uploadError
+
+      const { data } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath)
+
+      // Add timestamp to bust cache
+      const publicUrl = `${data.publicUrl}?t=${Date.now()}`
+
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('id', userId)
+
+      if (updateError) throw updateError
+
+      setAvatarUrl(publicUrl)
+      setMessage('Avatar updated successfully!')
+    } catch (err: any) {
+      setError(err.message || 'An error occurred during upload')
+      console.error('Avatar upload error:', err)
+    } finally {
       setUploading(false)
-      return
+      if (fileInputRef.current) fileInputRef.current.value = ''
     }
-
-    const { data } = supabase.storage
-      .from('avatars')
-      .getPublicUrl(filePath)
-
-    // Save avatar URL to profile
-    await supabase
-      .from('profiles')
-      .update({ avatar_url: data.publicUrl })
-      .eq('id', userId)
-
-    setAvatarUrl(data.publicUrl)
-    setUploading(false)
-    setMessage('Avatar updated!')
   }
 
   async function handleSave() {
