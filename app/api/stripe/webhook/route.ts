@@ -38,6 +38,13 @@ export async function POST(request: Request) {
       const customerId = session.customer as string
       const subscriptionId = session.subscription as string
 
+      // Send notification to user
+      await supabaseAdmin.from('notifications').insert({
+        user_id: userId,
+        message: 'Your subscription is now active!',
+        read: false,
+      })
+
       if (!userId) break
 
       // Fetch the full subscription details from Stripe

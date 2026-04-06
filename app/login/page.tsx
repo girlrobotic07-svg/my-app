@@ -29,6 +29,15 @@ function LoginForm() {
         const { error } = await supabase.auth.signUp({ email, password })
         if (error) throw error
         setMessage('Check your email for a confirmation link!')
+        if (!error) {
+          // Send welcome email
+          await fetch('/api/auth/welcome', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, name: '' }),
+          })
+          setMessage('Check your email — a welcome message is on its way!')
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
