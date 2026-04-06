@@ -32,7 +32,7 @@ export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // If user is NOT logged in and tries to visit a protected page → redirect to login
-  const protectedRoutes = ['/dashboard', '/account', '/billing', '/products', '/settings']
+  const protectedRoutes = ['/dashboard', '/account', '/billing', '/settings', '/admin']
   const isProtected = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   )
