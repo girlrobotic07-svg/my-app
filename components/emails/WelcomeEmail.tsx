@@ -13,7 +13,7 @@ export function WelcomeEmail({ name }: { name: string }) {
         <li>✅ Browse our plans</li>
         <li>✅ Start your subscription</li>
       </ul>
-      
+      <a
         href={process.env.NEXT_PUBLIC_SITE_URL}
         style={{
           display: 'inline-block',
