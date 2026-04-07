@@ -49,11 +49,16 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
     if (product) formData.append('id', product.id)
 
     try {
-      await upsertProduct(formData)
+      const result = await upsertProduct(formData)
+      if (result?.error) {
+        setError(result.error)
+        setLoading(false)
+        return
+      }
       router.push('/admin/products')
       router.refresh()
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message || 'Failed to connect to server')
       setLoading(false)
     }
   }
