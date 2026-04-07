@@ -9,6 +9,11 @@ const supabaseAdmin = createClient(
 )
 
 export async function upsertProduct(formData: FormData) {
+  // Debug check for environment variables
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return { error: 'Environment Error: SUPABASE_SERVICE_ROLE_KEY is missing. Please add it to Vercel/Project settings.' }
+  }
+
   try {
     const id = formData.get('id') as string | null
     const name = formData.get('name') as string
