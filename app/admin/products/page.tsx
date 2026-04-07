@@ -7,11 +7,6 @@ export default async function ProductsPage() {
   const { data: products, error } = await supabaseAdmin
     .from('products')
     .select(`
-      *,
-      categories (name)
-    `)
-    .order('created_at', { ascending: false })
-
   if (error) {
     console.error('Fetch error:', error)
   }
@@ -24,6 +19,11 @@ export default async function ProductsPage() {
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
+      {error && (
+        <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm border border-red-100 mb-6">
+          <strong>Database Error:</strong> {error.message}
+        </div>
+      )}
       <header className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Products</h1>
