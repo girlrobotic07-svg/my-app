@@ -2,6 +2,8 @@ import { resend } from '@/lib/resend'
 import { WelcomeEmail } from '@/components/emails/WelcomeEmail'
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   const { email, name } = await request.json()
 
