@@ -1,18 +1,20 @@
-import { createSupabaseServer } from '@/lib/supabase-server'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 import Link from 'next/link'
 import { deleteProduct } from './actions'
 
 export default async function ProductsPage() {
-  const supabase = await createSupabaseServer()
-  
-  // Fetch products with category names
-  const { data: products } = await supabase
+  // Fetch products with category names using admin client (bypasses RLS)
+  const { data: products, error } = await supabaseAdmin
     .from('products')
     .select(`
       *,
       categories (name)
     `)
     .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Fetch error:', error)
+  }
 
   function formatPrice(cents: number) {
     return new Intl.NumberFormat('en-US', {
