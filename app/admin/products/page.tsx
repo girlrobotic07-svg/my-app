@@ -51,9 +51,18 @@ export default async function ProductsPage() {
             {products?.map((prod) => (
               <tr key={prod.id} className="hover:bg-gray-50/50 transition">
                 <td className="px-6 py-4">
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-gray-900">{prod.name}</span>
-                    <span className="text-xs text-gray-400 font-mono mt-0.5 italic">{prod.slug}</span>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gray-50 rounded-lg border border-gray-100 flex-shrink-0 overflow-hidden">
+                      {prod.image_url ? (
+                        <img src={prod.image_url} alt={prod.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-[8px] text-gray-300 font-bold uppercase">No Img</div>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-gray-900">{prod.name}</span>
+                      <span className="text-xs text-gray-400 font-mono mt-0.5 italic">{prod.slug}</span>
+                    </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 italic">

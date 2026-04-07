@@ -24,7 +24,7 @@ export async function upsertProduct(formData: FormData) {
   const sizes = (formData.get('sizes') as string).split(',').map(s => s.trim()).filter(Boolean)
   const colors = (formData.get('colors') as string).split(',').map(c => c.trim()).filter(Boolean)
 
-  const data = {
+  const data: any = {
     name,
     slug,
     description,
@@ -36,6 +36,28 @@ export async function upsertProduct(formData: FormData) {
     is_featured,
     sizes,
     colors
+  }
+
+  // Handle Image Upload
+  const imageFile = formData.get('image') as File | null
+  if (imageFile && imageFile.size > 0) {
+    const fileExt = imageFile.name.split('.').pop()
+    const fileName = `${Math.random()}.${fileExt}`
+    const filePath = `${fileName}`
+
+    const { data: uploadData, error: uploadError } = await supabaseAdmin
+      .storage
+      .from('product-images')
+      .upload(filePath, imageFile)
+
+    if (uploadError) throw new Error(`Upload failed: ${uploadError.message}`)
+
+    const { data: { publicUrl } } = supabaseAdmin
+      .storage
+      .from('product-images')
+      .getPublicUrl(filePath)
+
+    data.image_url = publicUrl
   }
 
   if (id) {

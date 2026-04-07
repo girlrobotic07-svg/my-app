@@ -18,6 +18,7 @@ interface ProductFormProps {
     is_featured: boolean
     sizes: string[]
     colors: string[]
+    image_url?: string
   }
   categories: { id: string, name: string }[]
 }
@@ -26,6 +27,18 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [preview, setPreview] = useState<string | null>(product?.image_url || null)
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -167,6 +180,59 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
               <option value="published">Published</option>
               <option value="archived">Archived</option>
             </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Image Upload */}
+      <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
+        <h2 className="text-lg font-bold text-gray-900 border-b border-gray-50 pb-4">Product Image</h2>
+        <div className="flex items-start gap-8">
+          <div className="flex-1 space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700">Upload Image</label>
+              <div className="relative group cursor-pointer">
+                <input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                />
+                <div className="w-full px-4 py-8 border-2 border-dashed border-gray-200 rounded-2xl group-hover:border-black transition flex flex-col items-center gap-2">
+                  <span className="text-sm text-gray-500">Click to upload or drag and drop</span>
+                  <span className="text-xs text-gray-400">PNG, JPG, WEBP (max 5MB)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="w-48 h-48 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-center overflow-hidden relative group">
+            {preview ? (
+              <>
+                <img src={preview} alt="Product preview" className="w-full h-full object-cover" />
+                <button 
+                  type="button"
+                  onClick={() => {
+                    setPreview(null)
+                    const input = document.querySelector('input[name="image"]') as HTMLInputElement
+                    if (input) input.value = ''
+                  }}
+                  className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm p-1.5 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition"
+                >
+                  <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </>
+            ) : (
+              <div className="text-center space-y-2">
+                <svg className="w-8 h-8 text-gray-300 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400">No Image</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
