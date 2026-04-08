@@ -50,9 +50,9 @@ export default function CheckoutButton({ priceId, isCurrentPlan, isLoggedIn }: P
     <button
       onClick={handleCheckout}
       disabled={loading}
-      className="w-full bg-black text-white py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition disabled:opacity-50"
+      className="w-full bg-black text-white py-3 rounded-xl text-sm font-bold hover:bg-gray-800 transition disabled:opacity-50 shadow-lg shadow-black/10"
     >
-      {loading ? 'Redirecting...' : isLoggedIn ? 'Get Started' : 'Sign in to Subscribe'}
+      {loading ? 'Redirecting...' : isLoggedIn ? 'Buy Now' : 'Sign in to Buy'}
     </button>
   )
 }
