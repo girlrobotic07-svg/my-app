@@ -4,13 +4,15 @@ import { deleteProduct } from './actions'
 
 export default async function ProductsPage() {
   // Fetch products with category names using admin client (bypasses RLS)
-  const { data: products, error } = await supabaseAdmin
-    .from('products')
-    .select(`
-      *,
-      categories (name)
-    `)
-    .order('created_at', { ascending: false })
+  // Fetch products and categories separately to avoid "missing relationship" error
+  const [productsRes, categoriesRes] = await Promise.all([
+    supabaseAdmin.from('products').select('*').order('created_at', { ascending: false }),
+    supabaseAdmin.from('categories').select('id, name')
+  ])
+
+  const products = productsRes.data
+  const error = productsRes.error || categoriesRes.error
+  const categoriesMap = Object.fromEntries(categoriesRes.data?.map(c => [c.id, c.name]) || [])
 
   if (error) {
     console.error('Fetch error:', error)
@@ -73,7 +75,7 @@ export default async function ProductsPage() {
                   </div>
                 </td>
                 <td className="px-6 py-4 italic">
-                  {(prod.categories as any)?.name ?? 'Uncategorized'}
+                  {categoriesMap[prod.category_id] ?? 'Uncategorized'}
                 </td>
                 <td className="px-6 py-4 font-medium text-gray-900">
                   {formatPrice(prod.price)}

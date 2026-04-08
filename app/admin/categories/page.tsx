@@ -1,10 +1,9 @@
-import { createSupabaseServer } from '@/lib/supabase-server'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 import Link from 'next/link'
 import { deleteCategory } from './actions'
 
 export default async function CategoriesPage() {
-  const supabase = await createSupabaseServer()
-  const { data: categories } = await supabase
+  const { data: categories } = await supabaseAdmin
     .from('categories')
     .select('*')
     .order('name')
