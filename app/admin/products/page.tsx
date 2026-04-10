@@ -19,8 +19,9 @@ export default async function ProductsPage() {
   }
 
   function formatPrice(cents: number) {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency', currency: 'USD',
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency', currency: 'INR',
+      maximumFractionDigits: 0,
     }).format(cents / 100)
   }
 
