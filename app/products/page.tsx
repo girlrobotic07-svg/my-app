@@ -22,7 +22,7 @@ function formatPrice(cents: number) {
     style: 'currency', 
     currency: 'INR',
     maximumFractionDigits: 0,
-  }).format(cents / 100)
+  }).format(cents)
 }
 
 export default async function ProductsPage() {

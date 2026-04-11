@@ -124,13 +124,13 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">Price (in cents)</label>
+            <label className="text-sm font-semibold text-gray-700">Price (in Rupees)</label>
             <input
               required
               type="number"
               name="price"
               defaultValue={product?.price}
-              placeholder="e.g. 4900 (for $49.00)"
+              placeholder="e.g. 6500 (for ₹6,500)"
               className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition"
             />
           </div>
