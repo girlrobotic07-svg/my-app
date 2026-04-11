@@ -36,31 +36,54 @@ export async function POST(request: Request) {
       const session = event.data.object as Stripe.Checkout.Session
       const userId = session.metadata?.userId
       const customerId = session.customer as string
-      const subscriptionId = session.subscription as string
+      const mode = session.mode
 
       // Send notification to user
       await supabaseAdmin.from('notifications').insert({
         user_id: userId,
-        message: 'Your subscription is now active!',
+        message: mode === 'payment' ? 'Your order is successful!' : 'Your subscription is now active!',
         read: false,
       })
 
       if (!userId) break
 
-      // Fetch the full subscription details from Stripe
-      const subscription = await stripe.subscriptions.retrieve(subscriptionId)
-
-      // Save subscription to our database
-      await supabaseAdmin.from('subscriptions').upsert({
+      let subscriptionData: any = {
         user_id: userId,
         stripe_customer_id: customerId,
-        stripe_subscription_id: subscriptionId,
-        stripe_price_id: subscription.items.data[0].price.id,
-        status: subscription.status,
-        current_period_end: new Date(
-          (subscription as any).current_period_end * 1000
-        ).toISOString(),
-      }, { onConflict: 'user_id' })
+        status: 'active',
+      }
+
+      if (mode === 'subscription') {
+        const subscriptionId = session.subscription as string
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+        subscriptionData = {
+          ...subscriptionData,
+          stripe_subscription_id: subscriptionId,
+          stripe_price_id: subscription.items.data[0].price.id,
+          status: subscription.status,
+          current_period_end: new Date(
+            (subscription as any).current_period_end * 1000
+          ).toISOString(),
+        }
+      } else {
+        // Handle one-time payment
+        // We'll use a far-future date or just now for one-time payments to keep them visible
+        subscriptionData = {
+          ...subscriptionData,
+          stripe_subscription_id: session.id, // Use session ID as unique identifier
+          stripe_price_id: 'one-time-purchase', // Placeholder or fetch from line items
+          current_period_end: new Date().toISOString(), 
+        }
+
+        // Try to get price ID from line items if possible
+        const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
+        if (lineItems.data.length > 0) {
+          subscriptionData.stripe_price_id = lineItems.data[0].price?.id || 'one-time-purchase'
+        }
+      }
+
+      // Save to our database (repurposing subscriptions table for orders)
+      await supabaseAdmin.from('subscriptions').upsert(subscriptionData, { onConflict: 'user_id' })
 
       break
     }

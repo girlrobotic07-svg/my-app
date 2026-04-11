@@ -20,19 +20,19 @@ export default async function BillingPage({
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-16">
-      <h1 className="text-3xl font-bold mb-8">Billing</h1>
+      <h1 className="text-3xl font-bold mb-8">Orders & Billing</h1>
 
       {/* Success banner */}
       {success && (
         <div className="bg-green-50 border border-green-200 text-green-700 rounded-xl px-5 py-4 mb-6 text-sm">
-          🎉 Payment successful! Your subscription is now active.
+          🎉 Payment successful! Your order has been placed.
         </div>
       )}
 
       {subscription ? (
         <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold">Active Subscription</h2>
+            <h2 className="text-lg font-semibold">Order Details</h2>
             <span className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium">
               {subscription.status}
             </span>
@@ -66,18 +66,18 @@ export default async function BillingPage({
               href="/products"
               className="text-sm text-gray-500 hover:text-black underline transition"
             >
-              Change plan →
+              Shop more →
             </Link>
           </div>
         </div>
       ) : (
         <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center shadow-sm">
-          <p className="text-gray-500 mb-4">You don't have an active subscription.</p>
+          <p className="text-gray-500 mb-4">You don't have any recent orders.</p>
           <Link
             href="/products"
             className="bg-black text-white px-6 py-2.5 rounded-lg text-sm hover:bg-gray-800 transition"
           >
-            View Plans
+            View Products
           </Link>
         </div>
       )}
