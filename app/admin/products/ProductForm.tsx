@@ -154,8 +154,11 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
               name="stripe_price_id"
               defaultValue={product?.stripe_price_id}
               placeholder="price_..."
+              pattern="price_.*"
+              title="Stripe Price ID must start with 'price_'"
               className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-black outline-none transition font-mono text-xs"
             />
+            <p className="text-[10px] text-gray-400 mt-1 italic">Must start with 'price_'</p>
           </div>
         </div>
 
