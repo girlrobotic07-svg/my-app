@@ -83,7 +83,7 @@ export async function POST(request: Request) {
       }
 
       // Save to our database (repurposing subscriptions table for orders)
-      await supabaseAdmin.from('subscriptions').upsert(subscriptionData, { onConflict: 'user_id' })
+      await supabaseAdmin.from('subscriptions').upsert(subscriptionData, { onConflict: 'stripe_subscription_id' })
 
       break
     }
