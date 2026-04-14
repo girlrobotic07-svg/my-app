@@ -30,83 +30,108 @@ export async function POST(request: Request) {
   }
 
   // Handle specific Stripe events
-  switch (event.type) {
+  try {
+    console.log(`Processing Stripe event: ${event.type}`)
 
-    case 'checkout.session.completed': {
-      const session = event.data.object as Stripe.Checkout.Session
-      const userId = session.metadata?.userId
-      const customerId = session.customer as string
-      const mode = session.mode
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session
+        const userId = session.metadata?.userId
+        const customerId = session.customer as string
+        const mode = session.mode
 
-      // Send notification to user
-      await supabaseAdmin.from('notifications').insert({
-        user_id: userId,
-        message: mode === 'payment' ? 'Your order is successful!' : 'Your subscription is now active!',
-        read: false,
-      })
+        console.log(`Checkout session completed: userId=${userId}, mode=${mode}`)
 
-      if (!userId) break
-
-      let subscriptionData: any = {
-        user_id: userId,
-        stripe_customer_id: customerId,
-        status: 'active',
-      }
-
-      if (mode === 'subscription') {
-        const subscriptionId = session.subscription as string
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId)
-        subscriptionData = {
-          ...subscriptionData,
-          stripe_subscription_id: subscriptionId,
-          stripe_price_id: subscription.items.data[0].price.id,
-          status: subscription.status,
-          current_period_end: new Date(
-            (subscription as any).current_period_end * 1000
-          ).toISOString(),
-        }
-      } else {
-        // Handle one-time payment
-        // We'll use a far-future date or just now for one-time payments to keep them visible
-        subscriptionData = {
-          ...subscriptionData,
-          stripe_subscription_id: session.id, // Use session ID as unique identifier
-          stripe_price_id: 'one-time-purchase', // Placeholder or fetch from line items
-          current_period_end: new Date().toISOString(), 
+        if (!userId) {
+          console.error('No userId found in session metadata')
+          break
         }
 
-        // Try to get price ID from line items if possible
-        const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
-        if (lineItems.data.length > 0) {
-          subscriptionData.stripe_price_id = lineItems.data[0].price?.id || 'one-time-purchase'
-        }
-      }
-
-      // Save to our database (repurposing subscriptions table for orders)
-      await supabaseAdmin.from('subscriptions').upsert(subscriptionData, { onConflict: 'stripe_subscription_id' })
-
-      break
-    }
-
-    case 'customer.subscription.updated':
-    case 'customer.subscription.deleted': {
-      const subscription = event.data.object as Stripe.Subscription
-
-      // Update subscription status in our database
-      await supabaseAdmin
-        .from('subscriptions')
-        .update({
-          status: subscription.status,
-          stripe_price_id: subscription.items.data[0].price.id,
-          current_period_end: new Date(
-            (subscription as any).current_period_end * 1000
-          ).toISOString(),
+        // Send notification to user
+        await supabaseAdmin.from('notifications').insert({
+          user_id: userId,
+          message: mode === 'payment' ? 'Your order is successful!' : 'Your subscription is now active!',
+          read: false,
         })
-        .eq('stripe_subscription_id', subscription.id)
 
-      break
+        let subscriptionData: any = {
+          user_id: userId,
+          stripe_customer_id: customerId,
+          status: 'active',
+        }
+
+        if (mode === 'subscription') {
+          const subscriptionId = session.subscription as string
+          const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+          subscriptionData = {
+            ...subscriptionData,
+            stripe_subscription_id: subscriptionId,
+            stripe_price_id: subscription.items.data[0].price.id,
+            status: subscription.status,
+            current_period_end: new Date(
+              (subscription as any).current_period_end * 1000
+            ).toISOString(),
+          }
+        } else {
+          // Handle one-time payment
+          subscriptionData = {
+            ...subscriptionData,
+            stripe_subscription_id: session.id, 
+            stripe_price_id: 'one-time-purchase', 
+            current_period_end: new Date().toISOString(), 
+          }
+
+          const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
+          if (lineItems.data.length > 0) {
+            subscriptionData.stripe_price_id = lineItems.data[0].price?.id || 'one-time-purchase'
+          }
+        }
+
+        console.log('Upserting subscription data:', subscriptionData)
+
+        const { error: upsertError } = await supabaseAdmin
+          .from('subscriptions')
+          .upsert(subscriptionData, { onConflict: 'stripe_subscription_id' })
+
+        if (upsertError) {
+          console.error('Error upserting subscription:', upsertError)
+          // Log error to notifications for visibility
+          await supabaseAdmin.from('notifications').insert({
+            user_id: userId,
+            message: `Order sync error: ${upsertError.message}`,
+            read: false,
+          })
+        }
+
+        break
+      }
+
+      case 'customer.subscription.updated':
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object as Stripe.Subscription
+        console.log(`Subscription updated/deleted: ${subscription.id}, status=${subscription.status}`)
+
+        await supabaseAdmin
+          .from('subscriptions')
+          .update({
+            status: subscription.status,
+            stripe_price_id: subscription.items.data[0].price.id,
+            current_period_end: new Date(
+              (subscription as any).current_period_end * 1000
+            ).toISOString(),
+          })
+          .eq('stripe_subscription_id', subscription.id)
+
+        break
+      }
     }
+  } catch (error: any) {
+    console.error('Error handling webhook event:', error)
+    return NextResponse.json(
+      { error: `Webhook handling error: ${error.message}` },
+      { status: 500 }
+    )
   }
 
   return NextResponse.json({ received: true })
-}
+}

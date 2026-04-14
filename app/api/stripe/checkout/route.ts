@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       line_items: [{ price: priceId, quantity: 1 }],
       customer_email: user.email ?? undefined,         // pre-fill email on checkout
       client_reference_id: user.id,       // link session back to our user
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/billing?success=true`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/billing?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/products?canceled=true`,
       metadata: { userId: user.id },
     })

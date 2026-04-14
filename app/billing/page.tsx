@@ -2,16 +2,53 @@ import { createSupabaseServer } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import RefreshButton from '@/components/RefreshButton'
+import { stripe } from '@/lib/stripe'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 
 export default async function BillingPage({
   searchParams,
 }: {
-  searchParams: Promise<{ success?: string }>
+  searchParams: Promise<{ success?: string; session_id?: string }>
 }) {
-  const { success } = await searchParams
+  const { success, session_id } = await searchParams
   const supabase = await createSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
+
+  // Robust Fallback: Verify session directly if success=true and session_id is provided
+  // This handles cases where the Stripe webhook is delayed or failing on Vercel
+  if (success && session_id && session_id.startsWith('cs_')) {
+    try {
+      const session = await stripe.checkout.sessions.retrieve(session_id)
+      if (session.payment_status === 'paid') {
+        const userId = session.metadata?.userId || user.id
+        
+        const subscriptionData: any = {
+          user_id: userId,
+          stripe_customer_id: session.customer as string,
+          stripe_subscription_id: session.id,
+          stripe_price_id: 'verified-on-success', // Fallback placeholder
+          status: 'active',
+          current_period_end: new Date().toISOString(),
+        }
+
+        // Try to get price ID from line items
+        const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
+        if (lineItems.data.length > 0) {
+          subscriptionData.stripe_price_id = lineItems.data[0].price?.id || subscriptionData.stripe_price_id
+        }
+
+        // Upsert using admin client to bypass any RLS/delay issues
+        await supabaseAdmin
+          .from('subscriptions')
+          .upsert(subscriptionData, { onConflict: 'stripe_subscription_id' })
+        
+        console.log(`Successfully verified and persisted order: ${session.id}`)
+      }
+    } catch (err) {
+      console.error('Session verification fallback error:', err)
+    }
+  }
 
   const { data: orders, error } = await supabase
     .from('subscriptions')

@@ -145,11 +145,11 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[
-            { title: 'Royal Sherwani', tag: 'Wedding', img: '/images/sherwani_hero.png', price: '₹24,999' },
-            { title: 'Indo-Western Fusion', tag: 'Contemporary', img: '/images/indo_western.png', price: '₹18,999' },
-            { title: 'Celebration Kurtas', tag: 'Festive', img: '/images/kurta.png', price: '₹4,999' },
+            { title: 'Royal Sherwani', tag: 'Wedding', img: '/images/sherwani_hero.png', price: '₹24,999', slug: 'sherwani' },
+            { title: 'Indo-Western Fusion', tag: 'Contemporary', img: '/images/indo_western.png', price: '₹18,999', slug: 'indo-western' },
+            { title: 'Celebration Kurtas', tag: 'Festive', img: '/images/kurta.png', price: '₹4,999', slug: 'kurtas' },
           ].map((item, i) => (
-            <div key={item.title} className="group cursor-pointer">
+            <Link key={item.title} href={`/products#${item.slug}`} className="group cursor-pointer">
               <div className="relative aspect-[3/4] overflow-hidden rounded-3xl mb-4 bg-muted animate-in fade-in duration-500">
                 <Image
                   src={item.img}
@@ -165,7 +165,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold group-hover:text-accent transition-colors">{item.title}</h3>
               <p className="text-muted-foreground font-medium">Starts from {item.price}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </section>

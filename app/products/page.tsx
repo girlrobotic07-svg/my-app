@@ -15,6 +15,7 @@ type Product = {
 type Category = {
   id: string
   name: string
+  slug: string
 }
 
 function formatPrice(cents: number) {
@@ -30,7 +31,7 @@ export default async function ProductsPage() {
 
   // Fetch categories and products concurrently
   const [categoriesRes, productsRes] = await Promise.all([
-    supabase.from('categories').select('id, name').order('name'),
+    supabase.from('categories').select('id, name, slug').order('name'),
     supabase.from('products').select('*').order('price', { ascending: true })
   ])
 
@@ -76,7 +77,7 @@ export default async function ProductsPage() {
           if (categoryProducts.length === 0) return null
 
           return (
-            <section key={category.id} className="max-w-7xl mx-auto px-6">
+            <section key={category.id} id={category.slug} className="max-w-7xl mx-auto px-6 scroll-mt-24">
               <div className="flex items-center gap-8 mb-16">
                 <h2 className="text-3xl font-black text-slate-900 tracking-tight shrink-0">
                   {category.name}
