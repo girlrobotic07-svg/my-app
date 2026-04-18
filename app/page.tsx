@@ -2,136 +2,13 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect, useCallback } from 'react'
-
-const SLIDES = [
-  {
-    image: '/images/sherwani_hero.png',
-    title: 'Royal Sherwani',
-    subtitle: 'Wedding Essence',
-    description: 'Experience true royalty with our hand-crafted wedding couture.'
-  },
-  {
-    image: '/images/indo_western.png',
-    title: 'Indo-Western',
-    subtitle: 'Modern Fusion',
-    description: 'A perfect blend of contemporary style and traditional roots.'
-  },
-  {
-    image: '/images/kurta.png',
-    title: 'Silk Kurtas',
-    subtitle: 'Elegant Comfort',
-    description: 'Simple, sophisticated, and perfect for every celebration.'
-  }
-]
-
-function HeroSlider() {
-  const [current, setCurrent] = useState(0)
-
-  const nextSlide = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % SLIDES.length)
-  }, [])
-
-  const prevSlide = () => {
-    setCurrent((prev) => (prev - 1 + SLIDES.length) % SLIDES.length)
-  }
-
-  useEffect(() => {
-    const timer = setInterval(nextSlide, 5000)
-    return () => clearInterval(timer)
-  }, [nextSlide])
-
-  return (
-    <section className="relative h-[85vh] w-full overflow-hidden">
-      {SLIDES.map((slide, index) => (
-        <div
-          key={index}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-            index === current ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          <Image
-            src={slide.image}
-            alt={slide.title}
-            fill
-            className={`object-cover object-top transition-transform duration-[5s] ease-linear ${
-              index === current ? 'scale-110' : 'scale-100'
-            }`}
-            priority={index === 0}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-black/20" />
-          
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className={`text-center space-y-6 px-6 max-w-4xl transition-all duration-700 delay-300 ${
-              index === current ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-            }`}>
-              <span className="text-accent font-bold uppercase tracking-[0.3em] text-sm drop-shadow-md">
-                {slide.subtitle}
-              </span>
-              <h1 className="text-6xl lg:text-8xl font-black tracking-tighter leading-none text-white drop-shadow-2xl">
-                {slide.title.split(' ')[0]} <span className="text-accent">{slide.title.split(' ')[1]}</span>
-              </h1>
-              <p className="text-xl lg:text-2xl text-white/90 max-w-2xl mx-auto font-medium drop-shadow-md">
-                {slide.description}
-              </p>
-              <div className="pt-6 flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  href="/products"
-                  className="bg-accent text-white px-10 py-4 rounded-full text-lg font-bold hover:bg-accent/90 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-accent/20"
-                >
-                  Shop Collection
-                </Link>
-                <Link
-                  href="/login"
-                  className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-4 rounded-full text-lg font-bold hover:bg-white/20 transition-all active:scale-95"
-                >
-                  Book Appointment
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
-
-      {/* Navigation Arrows */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-6 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all z-20 group"
-      >
-        <svg className="w-6 h-6 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-6 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all z-20 group"
-      >
-        <svg className="w-6 h-6 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-
-      {/* Dots */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3 z-20">
-        {SLIDES.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrent(i)}
-            className={`h-1.5 transition-all duration-500 rounded-full ${
-              i === current ? 'w-8 bg-accent' : 'w-2 bg-white/40'
-            }`}
-          />
-        ))}
-      </div>
-    </section>
-  )
-}
+import HeroSection from '@/components/HeroSection'
 
 export default function Home() {
   return (
-    <main className="flex flex-col min-h-[calc(100vh-73px)] relative bg-background text-foreground">
+    <main className="flex flex-col min-h-screen relative bg-background text-foreground">
       
-      <HeroSlider />
+      <HeroSection />
 
       {/* Featured Collections Section */}
       <section className="py-24 px-6 max-w-7xl mx-auto w-full">
