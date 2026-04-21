@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation'
 import { createSupabaseBrowser } from '@/lib/supabase-browser'
 import type { User } from '@supabase/supabase-js'
 import { useScroll } from '@/hooks/useScroll'
+import { useCart } from '@/hooks/useCart'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   ShoppingBag, 
@@ -27,6 +28,7 @@ const CATEGORIES = [
 ]
 
 export default function Navbar() {
+  const { cartCount } = useCart()
   const [user, setUser] = useState<User | null>(null)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [initials, setInitials] = useState('?')
@@ -208,9 +210,16 @@ export default function Navbar() {
               }`}
             >
               <ShoppingBag size={22} strokeWidth={1.5} />
-              <span className="absolute -top-1 -right-1 bg-[#C9A14A] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-lg">
-                0
-              </span>
+              {cartCount > 0 && (
+                <motion.span 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  key={cartCount}
+                  className="absolute -top-1 -right-1 bg-[#C9A14A] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-lg"
+                >
+                  {cartCount}
+                </motion.span>
+              )}
             </Link>
 
             <div className={`hidden md:flex items-center gap-5 ml-2 border-l pl-5 h-6 transition-colors ${

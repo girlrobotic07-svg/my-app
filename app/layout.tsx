@@ -32,12 +32,24 @@
 //   );
 // }
 import type { Metadata } from 'next'
+import { Playfair_Display, Inter } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
+import { CartProvider } from '@/hooks/useCart'
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-serif',
+})
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+})
 
 export const metadata: Metadata = {
-  title: 'My App',
-  description: 'Built with Next.js + Supabase',
+  title: 'Shreeji Ethnic | Luxury Sherwani & Indo-Western Couture',
+  description: 'Experience timeless elegance with our handcrafted signature collections.',
 }
 
 export default function RootLayout({
@@ -46,11 +58,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen" suppressHydrationWarning>
-
-        <Navbar />
-        {children}
+    <html lang="en" className={`${playfair.variable} ${inter.variable}`} suppressHydrationWarning>
+      <body className="min-h-screen font-sans" suppressHydrationWarning>
+        <CartProvider>
+          <Navbar />
+          {children}
+        </CartProvider>
       </body>
     </html>
   )
